@@ -1,0 +1,59 @@
+.test {
+  width: 80%;
+  margin: 20px auto;
+}
+
+.textbox {
+  display: block;
+  width: 80%;
+  margin: 20px auto;
+  font-size: 40px;
+  line-height: 60px;
+  font-family: 'Source Code Pro', sans-serif;
+  border: none;
+  border-bottom: solid 2px #000;
+}
+
+.container-text {
+  display: block;
+  width: 845px;
+  font-family: 'Source Code Pro', sans-serif;
+  font-size: 32px;
+  line-height: 45px;
+  margin: 0 auto;
+}
+
+.ref-text {
+  position: absolute;
+  color: #BFBFBF;
+  font-weight: 200;
+  border-bottom: 1px solid #BFBFBF;
+}
+
+.input-text .correct {
+  color: black;
+}
+
+.input-text .incorrect {
+  color: red;
+}
+
+.input-text {
+  position: absolute;
+  display: inline-block;
+  border: none;
+  min-height: 40px;
+  font-weight: 600;
+}
+
+.blink-on {
+  border-right: 1px solid black;
+}
+
+.blink-off {
+  border-right: none;
+}
+
+.hidden {
+  visibility: hidden;
+}

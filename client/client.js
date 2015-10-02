@@ -1,20 +1,45 @@
 var reftext = 'the quick brown fox jumps over the lazy dog.';
 var blinktime = 500;
+var userid;
+var startTime;
+var timer;
 
 Session.set('intext', '');
 Session.set('cursor', 0);
 Session.set('blink', true);
+Session.set('time', null);
+Session.set('istyping', false);
+Session.set('timeDisplay', 0);
+
+// setup interval for cursor to blink
+Meteor.setInterval( function () {
+  Session.set('blink', !Session.get('blink'));
+}, blinktime);
 
 Meteor.startup( function () {
 
-  Meteor.setInterval( function () {
-    Session.set('blink', !Session.get('blink'));
-  }, blinktime);
+  userid = Cookie.get('userid');
+  if (userid == null) {
+    Scores.insert({}, function (e, id) {
+      userid = id;
+      Cookie.set('userid', userid);
+    });
+  }
 
   $(document).on('keypress', function (e) {
     // get current text and new keypress
     var text = Session.get('intext');
     var toAdd = String.fromCharCode(e.keyCode);
+
+    // log time if we just started typing
+    if (!Session.get('istyping')) {
+      Session.set('istyping', true);
+      startTime = Date.now();
+
+      timer = Meteor.setInterval( function () {
+        Session.set('timeDisplay', Math.round((Date.now() - startTime) / 10) / 100);
+      }, 80);
+    }
 
     // update text to display
     Session.set('intext', text+toAdd);
@@ -25,7 +50,12 @@ Meteor.startup( function () {
     // increment cursor position
     Session.set('cursor', Session.get('cursor')+1);
 
+    if (Session.get('intext') == reftext) {
+      sendScore();
+    }
+
   });
+
   $(document).on('keydown', function (e) {
     // get current text and cursor
     var text = Session.get('intext');
@@ -41,6 +71,8 @@ Meteor.startup( function () {
 
       // decrement cursor position
       Session.set('cursor', cursor-1);
+
+      e.preventDefault();
       
     } else if (e.keyCode == 46) {
       //delete
@@ -77,3 +109,33 @@ Template.inputdogfox.helpers({
     return '<span class="hidden">' + first + '</span>' + last;
   }
 });
+
+Template.stats.helpers({
+  typing: function() {
+    return Session.get('istyping');
+  },
+  currentTime: function() {
+    return Session.get('timeDisplay');
+  },
+  lastTime: function() {
+    return Math.round(Session.get('time')/10)/100;
+  },
+  haveSpeed: function() {
+    return Session.get('time') !== null;
+  }
+})
+
+function sendScore() {
+  // update user's score in database
+
+  var secs = Date.now() - startTime;
+  Scores.update(userid, {time: secs});
+  Session.set('time', secs);
+  Session.set('istyping', false);
+  Meteor.clearInterval(timer);
+
+  // animate textbox and reset input
+  Session.set('intext', '');
+  Session.set('cursor', 0);
+  console.log("yo");
+}

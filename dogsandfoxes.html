@@ -2,16 +2,28 @@
   <title>dogsandfoxes</title>
 
   <!-- Google fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,300,100' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,200,500,600,700,900,300' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
 
+  <h1>Dogs and Foxes</h1>
+  <h3>Reactive Visualizations with D3 and Meteor</h3>
+
+  {{> dataviz}}
+
   {{> inputdogfox}}
+
+  {{> stats}}
+
 </body>
 
+<template name="dataviz">
+  <svg id="wpmchart"></svg>
+</template>
+
 <template name="inputdogfox">
-  the visualization goes here
   <div class="container-text">
     <div class="ref-text">
       {{{reference}}}
@@ -20,5 +32,23 @@
       {{{letters}}}
     </div>
   </div>
+</template>
 
+<template name="stats">
+  <div class="container-speed">
+    {{#if haveSpeed}}
+      <p>Your fastest time is {{speedsec}} seconds. Start typing to try again.</p>
+    {{else}}
+      <p>How fast can you type the sentence above?</p>
+    {{/if}}
+
+    {{#if typing}}
+      <p>{{currentTime}} seconds elapsed</p>
+    {{else}}
+      {{#if haveSpeed}}
+        <p>last time: {{lastTime}} seconds</p>
+      {{/if}}
+    {{/if}}
+
+  </div>
 </template>

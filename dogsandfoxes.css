@@ -1,17 +1,24 @@
-.test {
-  width: 80%;
-  margin: 20px auto;
+h1 {
+  font-family: 'Roboto Slab';
+  font-weight: 400;
+  font-size: 55px;
+  line-height: 40px;
+  margin-bottom: 0;
+  text-align: center;
 }
 
-.textbox {
-  display: block;
-  width: 80%;
-  margin: 20px auto;
-  font-size: 40px;
-  line-height: 60px;
-  font-family: 'Source Code Pro', sans-serif;
-  border: none;
-  border-bottom: solid 2px #000;
+h3 {
+  font-family: 'Roboto Slab';
+  font-weight: 300;
+  font-size: 20px;
+  text-align: center;
+}
+
+.container-speed {
+  margin-top: 100px;
+  text-align: center;
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 300;
 }
 
 .container-text {

@@ -26,6 +26,12 @@ Meteor.startup( function () {
     });
   }
 
+  if (Cookie.get('best') != null) {
+    Session.set('best', Cookie.get('best'));
+  } else {
+    Session.set('best', 10000000);
+  }
+
   $(document).on('keypress', function (e) {
     // get current text and new keypress
     var text = Session.get('intext');
@@ -62,6 +68,10 @@ Meteor.startup( function () {
     var cursor = Session.get('cursor');
     
     if (e.keyCode == 8) {
+
+      // don't navigate back a page
+      e.preventDefault();
+
       // don't do anything if we're at the beginning of the line
       if (cursor == 0) return;
 
@@ -71,8 +81,6 @@ Meteor.startup( function () {
 
       // decrement cursor position
       Session.set('cursor', cursor-1);
-
-      e.preventDefault();
       
     } else if (e.keyCode == 46) {
       //delete
@@ -122,6 +130,9 @@ Template.stats.helpers({
   },
   haveSpeed: function() {
     return Session.get('time') !== null;
+  },
+  fastest: function() {
+    return Session.get('best');
   }
 })
 
@@ -129,13 +140,17 @@ function sendScore() {
   // update user's score in database
 
   var secs = Date.now() - startTime;
-  Scores.update(userid, {time: secs});
   Session.set('time', secs);
   Session.set('istyping', false);
   Meteor.clearInterval(timer);
 
+  if (Math.round(secs/10)/100 < Session.get('best')) {
+    Scores.update(userid, {time: secs});
+    Session.set('best', Math.round(secs/10)/100);
+    Cookie.set('best', Math.round(secs/10)/100);
+  }
+
   // animate textbox and reset input
   Session.set('intext', '');
   Session.set('cursor', 0);
-  console.log("yo");
 }

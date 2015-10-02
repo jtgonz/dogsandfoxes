@@ -37,7 +37,7 @@
 <template name="stats">
   <div class="container-speed">
     {{#if haveSpeed}}
-      <p>Your fastest time is {{speedsec}} seconds. Start typing to try again.</p>
+      <p>Your fastest time is <strong>{{fastest}}</strong> seconds. Start typing to try again.</p>
     {{else}}
       <p>How fast can you type the sentence above?</p>
     {{/if}}

@@ -1,23 +1,15 @@
 var reftext = 'the quick brown fox jumps over the lazy dog.';
 var blinktime = 500;
-var userid;
-var startTime;
-var timer;
+var userid, startTime, timer;
 
-Session.set('intext', '');
-Session.set('cursor', 0);
-Session.set('blink', true);
 Session.set('time', null);
 Session.set('istyping', false);
 Session.set('timeDisplay', 0);
 
-// setup interval for cursor to blink
-Meteor.setInterval( function () {
-  Session.set('blink', !Session.get('blink'));
-}, blinktime);
-
 Meteor.startup( function () {
 
+  // if we don't have any ID stored for this user, create new record
+  // in Scores collection, and store the returned ID in a cookie
   userid = Cookie.get('userid');
   if (userid == null) {
     Scores.insert({}, function (e, id) {
@@ -26,11 +18,30 @@ Meteor.startup( function () {
     });
   }
 
+  // store user's best time in a reactive variable.
   if (Cookie.get('best') != null) {
     Session.set('best', Cookie.get('best'));
   } else {
     Session.set('best', 10000000);
   }
+
+  // set cursor to position zero
+  Session.set('cursor', 0);
+
+  // setup interval for cursor to blink
+  // 'blink' is a reactive variable, so the CSS will update automatically
+  Meteor.setInterval( function () {
+    Session.set('blink', !Session.get('blink'));
+  }, blinktime);
+
+  // set up input text
+  Session.set('intext', '');
+
+  /*** Event Handlers for Key Presses ***/
+
+  // FYI -- keypress will relay what the actual character should be. So you'll
+  // get unique events for R and SHIFT+R. Whereas with keydown, you'll get
+  // two events if you do something like SHIFT+R (one for SHIFT and one for R).
 
   $(document).on('keypress', function (e) {
     // get current text and new keypress
@@ -67,6 +78,7 @@ Meteor.startup( function () {
     var text = Session.get('intext');
     var cursor = Session.get('cursor');
     
+    // BACKSPACE
     if (e.keyCode == 8) {
 
       // don't navigate back a page
@@ -82,13 +94,20 @@ Meteor.startup( function () {
       // decrement cursor position
       Session.set('cursor', cursor-1);
       
+    // DELETE
     } else if (e.keyCode == 46) {
       //delete
+
+    // ESCAPE
+    } else if (e.keyCode == 27) {
+      //escape
     }
   });
 });
 
 Template.inputdogfox.helpers({
+
+  // control visibility of cursor (border element on input text box)
   blink: function() {
     if (Session.get("blink")) {
       return 'blink-on'
@@ -96,6 +115,8 @@ Template.inputdogfox.helpers({
       return 'blink-off'
     }
   },
+
+  // return styled user input text
   letters: function() {
 
     var styled = '';
@@ -118,10 +139,12 @@ Template.inputdogfox.helpers({
         countIncorrect += 1;
       }
 
+      // if the character is whitespace, replace with &nbsp so DOM doesn't ignore it
       var letter = text[i] != ' ' ? text[i] : '&nbsp';
       styled = styled + '<span class="' + color + '">' + letter + '</span>';
     }
 
+    // update keystats object -- this will trigger update in the DOM
     Session.set('keystats', [
       {label: 'correct', num: countCorrect},
       {label: 'incorrect', num: countIncorrect},
@@ -130,6 +153,9 @@ Template.inputdogfox.helpers({
 
     return styled;
   },
+
+  // display original text behind user input text. hide the portion of
+  // text that overlaps with what the user has already typed
   reference: function() {
     var cursor = Session.get('cursor');
     var first = reftext.slice(0, cursor);

@@ -101,11 +101,32 @@ Template.inputdogfox.helpers({
     var styled = '';
     var text = Session.get('intext');
 
+    var countCorrect = 0;
+    var countIncorrect = 0;
+
+    // iterate through typed text, count number of correct and incorrect characters,
+    // and style them accordingly
     for (var i = 0; i < text.length; i++) {
-      var color = text[i] == reftext[i] ? 'correct' : 'incorrect';
+
+      var color;
+
+      if (text[i] == reftext[i]) {
+        color = 'correct';
+        countCorrect += 1;
+      } else {
+        color = 'incorrect';
+        countIncorrect += 1;
+      }
+
       var letter = text[i] != ' ' ? text[i] : '&nbsp';
       styled = styled + '<span class="' + color + '">' + letter + '</span>';
     }
+
+    Session.set('keystats', [
+      {label: 'correct', num: countCorrect},
+      {label: 'incorrect', num: countIncorrect},
+      {label: 'untyped', num: Math.max(44-countCorrect-countIncorrect,0)}
+    ]);
 
     return styled;
   },

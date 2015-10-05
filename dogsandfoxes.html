@@ -11,7 +11,7 @@
   <h1>Dogs and Foxes</h1>
   <h3>Reactive Visualizations with D3 and Meteor</h3>
 
-  {{> dataviz}}
+  {{> vizpie}}
 
   {{> inputdogfox}}
 
@@ -19,8 +19,9 @@
 
 </body>
 
-<template name="dataviz">
-  <svg id="wpmchart"></svg>
+<template name="vizpie">
+  <svg id="piechart" class="dataviz"></svg>
+  {{showPie}}
 </template>
 
 <template name="inputdogfox">

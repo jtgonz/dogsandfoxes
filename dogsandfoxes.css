@@ -15,7 +15,7 @@ h3 {
 }
 
 .container-speed {
-  margin-top: 100px;
+  margin-top: 140px;
   text-align: center;
   font-family: 'Helvetica Neue', sans-serif;
   font-weight: 300;
@@ -28,6 +28,11 @@ h3 {
   font-size: 32px;
   line-height: 45px;
   margin: 0 auto;
+}
+
+.dataviz {
+  display: block;
+  margin: 40px auto 50px auto;
 }
 
 .ref-text {
